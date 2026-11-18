@@ -15,44 +15,58 @@ public class PrimaryController {
     @FXML private Label pontosJogador;
     @FXML private Label resultado;
 
-    // private Jogo jogo;
+    private Jogo jogo = new Jogo();
 
-    public void turno(){
+    private void turno(){
+        jogo.distribuiCartaParaJogador(jogo.getJogador());
+        jogo.distribuiCartaParaJogador(jogo.getComputador());
+        atualizarTela();
 
+        if (jogo.acabou()) {
+            resultado.setText(jogo.resultado());
+        }
     }
 
-    public void atualizar(){
-        // pontosJogador.setText("Jogador: " + jogo.jogador.getPontos());
-        // pontosMesa.setText("Mesa: " + jogo.computador.getPontos());
-        
-        // mesaDoJogador.getChildren().clear();
-        // mesaDoComputador.getChildren().clear();
+    private void atualizarTela(){
+        pontosJogador.setText("Jogador: " + jogo.getJogador().getPontos());
+        pontosMesa.setText("Mesa: " + jogo.getComputador().getPontos());
 
-        // jogo.jogador.getCartas().forEach((carta) -> mesaDoJogador.getChildren().add(imagemCarta(carta)));
-        // jogo.computador.getCartas().forEach((carta) -> mesaDoComputador.getChildren().add(imagemCarta(carta)));
+        mesaDoJogador.getChildren().clear();
+        mesaDoComputador.getChildren().clear();
+
+        jogo.getJogador().getCartas().forEach((carta) -> mesaDoJogador.getChildren().add(criarImagemDaCarta(carta)));
+        jogo.getComputador().getCartas().forEach((carta) -> mesaDoComputador.getChildren().add(criarImagemDaCarta(carta)));
     }
 
     public void novoJogo(){
-        // jogo = new Jogo();
-        // mesaDoJogador.getChildren().clear();
-        // mesaDoComputador.getChildren().clear();
-        // pontosJogador.setText("Jogador: 0");
-        // pontosMesa.setText("Mesa: 0");
-        // resultado.setText("");
+        jogo = new Jogo();
+        mesaDoJogador.getChildren().clear();
+        mesaDoComputador.getChildren().clear();
+        pontosJogador.setText("Jogador: 0");
+        pontosMesa.setText("Mesa: 0");
+        resultado.setText("");
     }
 
     public void pedirCarta(){
-       turno();
+        if (jogo.acabou()) {
+            return;
+        }
+        turno();
     }
 
     public void parar(){
-        // jogo.jogador.parar();
-        turno();
+        if (jogo.acabou()) {
+            return;
+        }
+        jogo.getJogador().parar();
+        do {
+            turno();
+        } while (!jogo.acabou());
     }
-    
 
-    // private ImageView imagemCarta(Carta carta) {
-    //    return new ImageView(App.class.getResource(carta.imagePath()).toString());
-    // }
+
+    private ImageView criarImagemDaCarta(Carta carta) {
+        return new ImageView(App.class.getResource(carta.imagePath()).toString());
+    }
 
 }
